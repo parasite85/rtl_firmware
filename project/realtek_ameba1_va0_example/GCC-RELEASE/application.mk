@@ -1,5 +1,6 @@
 # Flags
 # -------------------------------------------------------------------
+SHELL = bash
 CONFIG_BT = 0
 # -------------------------------------------------------------------
 # Initialize tool chain
@@ -12,6 +13,7 @@ IMAGE1_DIR = ../../../component/soc/realtek/8195a/misc/bsp/image/
 CROSS_COMPILE = $(ARM_GCC_TOOLCHAIN)/arm-none-eabi-
 
 # Compilation tools
+STRIP = $(CROSS_COMPILE)strip
 AR = $(CROSS_COMPILE)ar
 CC = $(CROSS_COMPILE)gcc
 AS = $(CROSS_COMPILE)as
@@ -265,7 +267,7 @@ SRC_C += ../../../component/common/application/google/google_tls.c
 SRC_C += ../../../component/common/network/httpc/httpc_tls.c
 
 #network - httpd
-SRC_C += ../../../component/common/network/httpd/httpd_tls.c
+DRAM_C += ../../../component/common/network/httpd/httpd_tls.c
 
 #network - mdns
 SRC_C += ../../../component/common/network/mDNS/mDNSPlatform.c
@@ -554,7 +556,7 @@ SRC_C += ../../../component/common/example/high_load_memory_use/example_high_loa
 SRC_C += ../../../component/common/example/http_client/example_http_client.c
 SRC_C += ../../../component/common/example/http_download/example_http_download.c
 SRC_C += ../../../component/common/example/httpc/example_httpc.c
-SRC_C += ../../../component/common/example/httpd/example_httpd.c
+DRAM_C += ../../../component/common/example/httpd/example_httpd.c
 SRC_C += ../../../component/common/example/mcast/example_mcast.c
 SRC_C += ../../../component/common/example/mdns/example_mdns.c
 #SRC_C += ../../../component/common/example/media_multi_stream/example_media_ms.c
@@ -564,7 +566,7 @@ SRC_C += ../../../component/common/example/nonblock_connect/example_nonblock_con
 SRC_C += ../../../component/common/example/pppoe/example_pppoe.c
 SRC_C += ../../../component/common/example/sntp_showtime/example_sntp_showtime.c
 SRC_C += ../../../component/common/example/socket_select/example_socket_select.c
-SRC_C += ../../../component/common/example/socket_tcp_trx/example_socket_tcp_trx_1.c
+DRAM_C += ../../../component/common/example/socket_tcp_trx/example_socket_tcp_trx_1.c
 SRC_C += ../../../component/common/example/socket_tcp_trx/example_socket_tcp_trx_2.c
 SRC_C += ../../../component/common/example/ssl_download/example_ssl_download.c
 SRC_C += ../../../component/common/example/ssl_server/example_ssl_server.c
@@ -657,6 +659,7 @@ manipulate_images:
 	@echo ===========================================================
 	@echo Image manipulating
 	@echo ===========================================================
+	$(STRIP) $(BIN_DIR)/$(TARGET).axf
 	$(NM) $(BIN_DIR)/$(TARGET).axf | sort > $(BIN_DIR)/$(TARGET).nmap
 	$(OBJCOPY) -j .image2.start.table -j .ram_image2.text -j .ram_image2.rodata -j .ram.data -Obinary $(BIN_DIR)/$(TARGET).axf $(BIN_DIR)/ram_2.bin
 	$(OBJCOPY) -j .sdr_text -j .sdr_rodata -j .sdr_data -Obinary $(BIN_DIR)/$(TARGET).axf $(BIN_DIR)/sdram.bin
@@ -826,6 +829,7 @@ endif
 	# manipulate ram_all.bin to no image1 sig (0x88167923)
 	head -c 52 $(BIN_DIR)/ram_all.bin > $(BIN_DIR)/ram_all.ns.bin
 	echo -n -e '\xFF\xFF\xFF\xFF' >> $(BIN_DIR)/ram_all.ns.bin
+	#printf '%b' '\xFF\xFF\xFF\xFF'  >> $(BIN_DIR)/ram_all.ns.bin
 	tail -c +57 $(BIN_DIR)/ram_all.bin >> $(BIN_DIR)/ram_all.ns.bin
 
 	cp	$(FLASH_TOOLDIR)/target_NORMALB.axf $(FLASH_TOOLDIR)/target_NORMAL.axf

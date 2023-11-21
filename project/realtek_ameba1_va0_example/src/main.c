@@ -4,8 +4,14 @@
 #include "main.h"
 #include <example_entry.h>
 
-extern void console_init(void);
+#include "device.h"
+#include "serial_api.h"
+#include "gpio_api.h"
 
+#define UART_TX    PA_7
+#define UART_RX    PA_6
+
+extern void console_init(void);
 
 /**
   * @brief  Main program.
@@ -15,7 +21,7 @@ extern void console_init(void);
 void main(void)
 {
 	/* Initialize log uart and at command service */
-	console_init();	
+	console_init();
 
 	/* pre-processor of application example */
 	pre_example_entry();
@@ -28,7 +34,9 @@ void main(void)
 	/* Execute application example */
 	example_entry();
 
-    	/*Enable Schedule, Start Kernel*/
+    DiagPrintf("!!!!!!!!!!!!!!!! Test !!!!!!!!!!!!!!!!!!!!!!\n");
+
+    /*Enable Schedule, Start Kernel*/
 #if defined(CONFIG_KERNEL) && !TASK_SCHEDULER_DISABLED
 	#ifdef PLATFORM_FREERTOS
 	vTaskStartScheduler();
