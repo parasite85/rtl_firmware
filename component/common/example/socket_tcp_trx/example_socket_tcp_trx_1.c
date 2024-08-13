@@ -12,6 +12,13 @@
 #define UART_TX    PA_7
 #define UART_RX    PA_6
 
+#define GPIO_LEDB_PIN       PC_0
+#define GPIO_LEDR_PIN       PC_1
+#define GPIO_PUSHBT_PIN    PB_2
+gpio_t gpio_ledb;
+gpio_t gpio_ledr;
+gpio_t gpio_btn;
+
 static int tx_exit = 0, rx_exit = 0;
 //static _Sema tcp_tx_rx_sema;
 static _sema tcp_tx_rx_sema;
@@ -63,6 +70,7 @@ static void tx_thread(void *param)
 
         if (j>0)
         {
+			gpio_write(&gpio_ledr, 1);
 #ifdef Z_UART_DEBUG
             printf("%d bytes UART->TCP: ", j);
             int i = 0;
@@ -81,6 +89,7 @@ static void tx_thread(void *param)
             {
                 printf("buff corrupted");
             }
+			gpio_write(&gpio_ledr, 0);
         }
         else
         {
@@ -117,6 +126,7 @@ static void rx_thread(void *param)
 		getsockopt(client_fd, SOL_SOCKET, SO_ERROR, &sock_err, &err_len);
 		rtw_up_sema(&tcp_tx_rx_sema);
         if (ret > 0){
+			gpio_write(&gpio_ledb, 1);
 #ifdef Z_UART_DEBUG
             printf("%d bytes TCP->UART: ", ret);
             int i=0;
@@ -127,6 +137,7 @@ static void rx_thread(void *param)
             printf("\n");
 #endif
             uart_send_data( &sobj, buffer, ret);
+			gpio_write(&gpio_ledb, 0);
         }
 
 		// ret == -1 and socket error == EAGAIN when no data received for nonblocking
@@ -210,6 +221,21 @@ exit:
 
 void example_socket_tcp_trx_1(void)
 {
+
+    // Init LED control pin
+    gpio_init(&gpio_ledb, GPIO_LEDB_PIN);
+    gpio_dir(&gpio_ledb, PIN_OUTPUT);    // Direction: Output
+    gpio_mode(&gpio_ledb, PullNone);     // No pull
+
+    // Init LED control pin
+    gpio_init(&gpio_ledr, GPIO_LEDR_PIN);
+    gpio_dir(&gpio_ledr, PIN_OUTPUT);    // Direction: Output
+    gpio_mode(&gpio_ledr, PullNone);     // No pull
+
+    // Initial Push Button pin
+    gpio_init(&gpio_btn, GPIO_PUSHBT_PIN);
+    gpio_dir(&gpio_btn, PIN_INPUT);     // Direction: Input
+    gpio_mode(&gpio_btn, PullUp);       // Pull-High
 
     // mbed uart test
     rtw_init_sema(&uart_tx_rx_sema, 1);

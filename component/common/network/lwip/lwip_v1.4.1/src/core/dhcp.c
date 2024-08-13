@@ -1476,6 +1476,7 @@ dhcp_option_long(struct dhcp *dhcp, u32_t value)
 static void
 dhcp_option_hostname(struct dhcp *dhcp, struct netif *netif)
 {
+  netif->hostname = "ZB2MQTT";
   if (netif->hostname != NULL) {
     size_t namelen = strlen(netif->hostname);
     if (namelen > 0) {

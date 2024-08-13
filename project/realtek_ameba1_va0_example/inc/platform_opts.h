@@ -9,6 +9,7 @@
 
 /*For MP mode setting*/
 #define SUPPORT_MP_MODE		0
+#define LWIP_NETIF_HOSTNAME 1
 
 /**
  * For AT cmd Log service configurations
@@ -116,11 +117,11 @@
 
 /*For fast reconnection*/
 #define CONFIG_EXAMPLE_WLAN_FAST_CONNECT	1
-#if CONFIG_EXAMPLE_WLAN_FAST_CONNECT
-#define CONFIG_FAST_DHCP 1
-#else
+//#if CONFIG_EXAMPLE_WLAN_FAST_CONNECT		#TODO: ugly workaround to get hostname working
+//#define CONFIG_FAST_DHCP 1
+//#else
 #define CONFIG_FAST_DHCP 0
-#endif
+//#endif
 
 /*For wowlan service settings*/
 #define CONFIG_WOWLAN_SERVICE           			0
