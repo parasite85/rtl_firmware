@@ -659,7 +659,7 @@ manipulate_images:
 	@echo ===========================================================
 	@echo Image manipulating
 	@echo ===========================================================
-	$(STRIP) $(BIN_DIR)/$(TARGET).axf
+#	$(STRIP) $(BIN_DIR)/$(TARGET).axf
 	$(NM) $(BIN_DIR)/$(TARGET).axf | sort > $(BIN_DIR)/$(TARGET).nmap
 	$(OBJCOPY) -j .image2.start.table -j .ram_image2.text -j .ram_image2.rodata -j .ram.data -Obinary $(BIN_DIR)/$(TARGET).axf $(BIN_DIR)/ram_2.bin
 	$(OBJCOPY) -j .sdr_text -j .sdr_rodata -j .sdr_data -Obinary $(BIN_DIR)/$(TARGET).axf $(BIN_DIR)/sdram.bin
